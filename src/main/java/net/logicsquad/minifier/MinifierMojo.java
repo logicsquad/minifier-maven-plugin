@@ -16,6 +16,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 
+import net.logicsquad.minifier.css.CSSMinifier;
 import net.logicsquad.minifier.js.JSMinifier;
 
 @Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
@@ -69,6 +70,24 @@ public class MinifierMojo extends AbstractMojo {
 			}
 		}
 		for (String s : cssFiles) {
+			try {
+			File infile = new File(sourceDir, s);
+			getLog().info("File: " + infile + " exists: " + infile.exists());
+			File outfile = new File(targetDir, s);
+			getLog().info("File: " + outfile + " exists: " + outfile.exists());
+
+			Minifier cssMin = new CSSMinifier(new FileReader(infile));
+				cssMin.minify(new FileWriter(outfile));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MinificationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		return;
