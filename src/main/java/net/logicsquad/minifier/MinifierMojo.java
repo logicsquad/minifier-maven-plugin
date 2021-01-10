@@ -80,9 +80,9 @@ public class MinifierMojo extends AbstractMojo {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				getLog().info("Minifying " + infile + " -> " + outfile);
 				Minifier jsMin = new JSMinifier(new FileReader(infile));
 				jsMin.minify(new FileWriter(outfile));
+				logMinificationResult(s, infile, outfile);
 			} catch (MinificationException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
@@ -98,9 +98,9 @@ public class MinifierMojo extends AbstractMojo {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				getLog().info("Minifying " + infile + " -> " + outfile);
 				Minifier cssMin = new CSSMinifier(new FileReader(infile));
 				cssMin.minify(new FileWriter(outfile));
+				logMinificationResult(s, infile, outfile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -113,6 +113,14 @@ public class MinifierMojo extends AbstractMojo {
 			}
 		}
 		
+		return;
+	}
+
+	private void logMinificationResult(String name, File infile, File outfile) {
+		long pre = infile.length();
+		long post = outfile.length();
+		long reduction = (long) (100.0 - (((double) post / (double) pre) * 100.0));
+		getLog().info("Minified '" + name + "' " + pre + " -> " + post + " (" + reduction + "%)");
 		return;
 	}
 }
