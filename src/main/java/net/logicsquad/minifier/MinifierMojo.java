@@ -81,8 +81,7 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	private List<String> jsFilenames() {
 		if (jsFilenames == null) {
-			jsFilenames = new ArrayList<>();
-			initialiseFilenames(jsFilenames, jsIncludes, jsExcludes);
+			jsFilenames = filenameList(jsIncludes, jsExcludes);
 		}
 		return jsFilenames;
 	}
@@ -94,20 +93,20 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	private List<String> cssFilenames() {
 		if (cssFilenames == null) {
-			cssFilenames = new ArrayList<>();
-			initialiseFilenames(cssFilenames, cssIncludes, cssExcludes);
+			cssFilenames = filenameList(cssIncludes, cssExcludes);
 		}
 		return cssFilenames;
 	}
 
 	/**
-	 * Initialises filename list from includes and excludes.
+	 * Returns filename list from includes and excludes.
 	 * 
-	 * @param list     filename list
 	 * @param includes list of include patterns
-	 * @param excludes lisr of exclude patterns
+	 * @param excludes list of exclude patterns
+	 * @return filename list
 	 */
-	private void initialiseFilenames(List<String> list, List<String> includes, List<String> excludes) {
+	private List<String> filenameList(List<String> includes, List<String> excludes) {
+		List<String> list = new ArrayList<>();
 		DirectoryScanner scanner = new DirectoryScanner();
 		scanner.setBasedir(sourceDir);
 		scanner.setIncludes(includes.toArray(new String[0]));
@@ -117,7 +116,7 @@ public class MinifierMojo extends AbstractMojo {
 		for (String s : scanner.getIncludedFiles()) {
 			list.add(s);
 		}
-		return;
+		return list;
 	}
 
 	/**
