@@ -124,6 +124,7 @@ public class MinifierMojo extends AbstractMojo {
 	/**
 	 * Performs Javascript and CSS minification.
 	 */
+	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		minify(JSMinifier.class, jsFilenames());
 		minify(CSSMinifier.class, cssFilenames());
