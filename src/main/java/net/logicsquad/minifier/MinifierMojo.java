@@ -1,7 +1,6 @@
 package net.logicsquad.minifier;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -84,7 +83,7 @@ public class MinifierMojo extends AbstractMojo {
 		return;
 	}
 
-	private void minify(Class<? extends Minifier> minifierClass, List<String> filenames) {
+	private void minify(Class<? extends Minifier> minifierClass, List<String> filenames) throws MojoFailureException {
 		for (String s : filenames) {
 			try {
 				File infile = new File(sourceDir, s);
@@ -93,33 +92,10 @@ public class MinifierMojo extends AbstractMojo {
 				Minifier minifier = constructor.newInstance(new FileReader(infile));
 				minifier.minify(new FileWriter(outfile));
 				logMinificationResult(s, infile, outfile);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MinificationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (MinificationException | IOException | NoSuchMethodException | SecurityException
+					| InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				throw new MojoFailureException("Unable to minify resources.", e);
 			}
 		}
 		return;
