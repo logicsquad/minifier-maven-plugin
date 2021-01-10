@@ -48,15 +48,7 @@ public class MinifierMojo extends AbstractMojo {
 	private List<String> jsFilenames() {
 		if (jsFilenames == null) {
 			jsFilenames = new ArrayList<>();
-			DirectoryScanner scanner = new DirectoryScanner();
-			scanner.setBasedir(sourceDir);
-			scanner.setIncludes(jsIncludes.toArray(new String[0]));
-			scanner.setExcludes(jsExcludes.toArray(new String[0]));
-			scanner.addDefaultExcludes();
-			scanner.scan();
-			for (String s : scanner.getIncludedFiles()) {
-				jsFilenames.add(s);
-			}
+			initialiseFilenames(jsFilenames, jsIncludes, jsExcludes);
 		}
 		return jsFilenames;
 	}
@@ -64,17 +56,22 @@ public class MinifierMojo extends AbstractMojo {
 	private List<String> cssFilenames() {
 		if (cssFilenames == null) {
 			cssFilenames = new ArrayList<>();
-			DirectoryScanner scanner = new DirectoryScanner();
-			scanner.setBasedir(sourceDir);
-			scanner.setIncludes(cssIncludes.toArray(new String[0]));
-			scanner.setExcludes(cssExcludes.toArray(new String[0]));
-			scanner.addDefaultExcludes();
-			scanner.scan();
-			for (String s : scanner.getIncludedFiles()) {
-				cssFilenames.add(s);
-			}
+			initialiseFilenames(cssFilenames, cssIncludes, cssExcludes);
 		}
 		return cssFilenames;
+	}
+
+	private void initialiseFilenames(List<String> list, List<String> includes, List<String> excludes) {
+		DirectoryScanner scanner = new DirectoryScanner();
+		scanner.setBasedir(sourceDir);
+		scanner.setIncludes(includes.toArray(new String[0]));
+		scanner.setExcludes(excludes.toArray(new String[0]));
+		scanner.addDefaultExcludes();
+		scanner.scan();
+		for (String s : scanner.getIncludedFiles()) {
+			list.add(s);
+		}
+		return;
 	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
