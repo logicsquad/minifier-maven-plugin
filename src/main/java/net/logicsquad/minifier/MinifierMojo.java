@@ -21,30 +21,64 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import net.logicsquad.minifier.css.CSSMinifier;
 import net.logicsquad.minifier.js.JSMinifier;
 
+/**
+ * Goal for minification of web resources.
+ * 
+ * @author paulh
+ */
 @Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class MinifierMojo extends AbstractMojo {
+	/**
+	 * Source directory
+	 */
 	@Parameter(property = "sourceDir", required = true)
 	private String sourceDir;
 
+	/**
+	 * Target directory
+	 */
 	@Parameter(property = "targetDir", required = true)
 	private String targetDir;
 
+	/**
+	 * List of Javascript includes
+	 */
 	@Parameter(property = "jsIncludes")
 	private List<String> jsIncludes;
 
+	/**
+	 * List of Javascript excludes
+	 */
 	@Parameter(property = "jsExcludes")
 	private List<String> jsExcludes;
 
+	/**
+	 * List of CSS includes
+	 */
 	@Parameter(property = "cssIncludes")
 	private List<String> cssIncludes;
 
+	/**
+	 * List of CSS excludes
+	 */
 	@Parameter(property = "cssExcludes")
 	private List<String> cssExcludes;
 
+	/**
+	 * Resolved list of Javascript filenames to minify
+	 */
 	private List<String> jsFilenames;
 
+	/**
+	 * Resolved list of CSS filenames to minify
+	 */
 	private List<String> cssFilenames;
 
+	/**
+	 * Returns resolved list of Javascript filenames for minification.
+	 * 
+	 * @return Javascript filenames
+	 */
 	private List<String> jsFilenames() {
 		if (jsFilenames == null) {
 			jsFilenames = new ArrayList<>();
@@ -53,6 +87,11 @@ public class MinifierMojo extends AbstractMojo {
 		return jsFilenames;
 	}
 
+	/**
+	 * Returns resolved list of CSS filenames for minification.
+	 * 
+	 * @return CSS filenames
+	 */
 	private List<String> cssFilenames() {
 		if (cssFilenames == null) {
 			cssFilenames = new ArrayList<>();
@@ -61,6 +100,13 @@ public class MinifierMojo extends AbstractMojo {
 		return cssFilenames;
 	}
 
+	/**
+	 * Initialises filename list from includes and excludes.
+	 * 
+	 * @param list     filename list
+	 * @param includes list of include patterns
+	 * @param excludes lisr of exclude patterns
+	 */
 	private void initialiseFilenames(List<String> list, List<String> includes, List<String> excludes) {
 		DirectoryScanner scanner = new DirectoryScanner();
 		scanner.setBasedir(sourceDir);
@@ -74,12 +120,23 @@ public class MinifierMojo extends AbstractMojo {
 		return;
 	}
 
+	/**
+	 * Performs Javascript and CSS minification.
+	 */
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		minify(JSMinifier.class, jsFilenames());
 		minify(CSSMinifier.class, cssFilenames());
 		return;
 	}
 
+	/**
+	 * Minifies {@link File}s represented by {@code filenames} using an instance of
+	 * {@code minifierClass}.
+	 * 
+	 * @param minifierClass class implementing {@link Minifier}
+	 * @param filenames     list of filenames
+	 * @throws MojoFailureException if any exception is caught during minification
+	 */
 	private void minify(Class<? extends Minifier> minifierClass, List<String> filenames) throws MojoFailureException {
 		for (String s : filenames) {
 			try {
@@ -98,6 +155,13 @@ public class MinifierMojo extends AbstractMojo {
 		return;
 	}
 
+	/**
+	 * Logs minification result.
+	 * 
+	 * @param name    filename
+	 * @param infile  input {@link File}
+	 * @param outfile output {@link File}
+	 */
 	private void logMinificationResult(String name, File infile, File outfile) {
 		long pre = infile.length();
 		long post = outfile.length();
