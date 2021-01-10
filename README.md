@@ -14,4 +14,5 @@ to provide _reasonable_ file size reduction in most cases.
 References
 ----------
 Minification is handled by Logic Squad's [Minifier](https://github.com/logicsquad/minifier)
-project.
+project. This project is inspired by [Minify Maven Plugin](https://github.com/samaxes/minify-maven-plugin),
+though aims to be a simpler product. 
