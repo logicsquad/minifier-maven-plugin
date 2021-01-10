@@ -1,10 +1,6 @@
 package net.logicsquad.minifier;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -12,6 +8,7 @@ import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,9 +144,10 @@ public class MinifierMojo extends AbstractMojo {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
 				Constructor<? extends Minifier> constructor = minifierClass.getConstructor(Reader.class);
-				Minifier minifier = constructor
-						.newInstance(new InputStreamReader(new FileInputStream(infile), StandardCharsets.UTF_8));
-				minifier.minify(new OutputStreamWriter(new FileOutputStream(outfile), StandardCharsets.UTF_8));
+				Minifier minifier = constructor.newInstance(
+						new InputStreamReader(Files.newInputStream(infile.toPath()), StandardCharsets.UTF_8));
+				minifier.minify(
+						new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
 				logMinificationResult(s, infile, outfile);
 			} catch (MinificationException | IOException | NoSuchMethodException | SecurityException
 					| InstantiationException | IllegalAccessException | IllegalArgumentException
