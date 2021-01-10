@@ -25,7 +25,7 @@ import net.logicsquad.minifier.js.JSMinifier;
 
 /**
  * Goal for minification of web resources.
- * 
+ *
  * @author paulh
  */
 @Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
@@ -78,7 +78,7 @@ public class MinifierMojo extends AbstractMojo {
 
 	/**
 	 * Returns resolved list of Javascript filenames for minification.
-	 * 
+	 *
 	 * @return Javascript filenames
 	 */
 	private List<String> jsFilenames() {
@@ -90,7 +90,7 @@ public class MinifierMojo extends AbstractMojo {
 
 	/**
 	 * Returns resolved list of CSS filenames for minification.
-	 * 
+	 *
 	 * @return CSS filenames
 	 */
 	private List<String> cssFilenames() {
@@ -102,7 +102,7 @@ public class MinifierMojo extends AbstractMojo {
 
 	/**
 	 * Returns filename list from includes and excludes.
-	 * 
+	 *
 	 * @param includes list of include patterns
 	 * @param excludes list of exclude patterns
 	 * @return filename list
@@ -134,7 +134,7 @@ public class MinifierMojo extends AbstractMojo {
 	/**
 	 * Minifies {@link File}s represented by {@code filenames} using an instance of
 	 * {@code minifierClass}.
-	 * 
+	 *
 	 * @param minifierClass class implementing {@link Minifier}
 	 * @param filenames     list of filenames
 	 * @throws MojoFailureException if any exception is caught during minification
@@ -161,7 +161,7 @@ public class MinifierMojo extends AbstractMojo {
 
 	/**
 	 * Logs minification result.
-	 * 
+	 *
 	 * @param name    filename
 	 * @param infile  input {@link File}
 	 * @param outfile output {@link File}
