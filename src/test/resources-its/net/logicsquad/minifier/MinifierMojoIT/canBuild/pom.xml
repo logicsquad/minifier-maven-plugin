@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.logicsquad</groupId>
+  <artifactId>minifier-maven-plugin-test</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <name>Test</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.logicsquad</groupId>
+        <artifactId>minifier-maven-plugin</artifactId>
+        <version>0.2-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-minify</id>
+            <configuration>
+              <sourceDir>${basedir}/src/test/resources-its/net/logicsquad/minifier/MinifierMojoIT/canBuild/src/main/webserver-resources</sourceDir>
+              <targetDir>${basedir}/target/maven-it/net/logicsquad/minifier/MinifierMojoIT/canBuild/project/target</targetDir>
+              <cssIncludes>
+                <cssInclude>**/*.css</cssInclude>
+              </cssIncludes>
+              <jsIncludes>
+                <jsInclude>**/*.js</jsInclude>
+              </jsIncludes>
+            </configuration>
+            <goals>
+              <goal>minify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
