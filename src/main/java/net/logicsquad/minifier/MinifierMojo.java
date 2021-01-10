@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,30 +79,19 @@ public class MinifierMojo extends AbstractMojo {
     }
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		for (String s : jsFilenames()) {
+		minify(JSMinifier.class, jsFilenames());
+		minify(CSSMinifier.class, cssFilenames());
+		return;
+	}
+
+	private void minify(Class<? extends Minifier> minifierClass, List<String> filenames) {
+		for (String s : filenames) {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				Minifier jsMin = new JSMinifier(new FileReader(infile));
-				jsMin.minify(new FileWriter(outfile));
-				logMinificationResult(s, infile, outfile);
-			} catch (MinificationException e) {
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// Unable to read infile
-				e.printStackTrace();
-			} catch (IOException e) {
-				// Unable to write to outfile
-				e.printStackTrace();
-			}
-		}
-		
-		for (String s : cssFilenames()) {
-			try {
-				File infile = new File(sourceDir, s);
-				File outfile = new File(targetDir, s);
-				Minifier cssMin = new CSSMinifier(new FileReader(infile));
-				cssMin.minify(new FileWriter(outfile));
+				Constructor<? extends Minifier> constructor = minifierClass.getConstructor(Reader.class);
+				Minifier minifier = constructor.newInstance(new FileReader(infile));
+				minifier.minify(new FileWriter(outfile));
 				logMinificationResult(s, infile, outfile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -110,9 +102,26 @@ public class MinifierMojo extends AbstractMojo {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		
 		return;
 	}
 
