@@ -30,16 +30,16 @@ public class MinifierMojo extends AbstractMojo {
 	private String targetDir;
 
 	@Parameter(property = "jsIncludes")
-	private ArrayList<String> jsIncludes;
+	private List<String> jsIncludes;
 
 	@Parameter(property = "jsExcludes")
-	private ArrayList<String> jsExcludes;
+	private List<String> jsExcludes;
 
 	@Parameter(property = "cssIncludes")
-	private ArrayList<String> cssIncludes;
+	private List<String> cssIncludes;
 
 	@Parameter(property = "cssExcludes")
-	private ArrayList<String> cssExcludes;
+	private List<String> cssExcludes;
 
 	private List<String> jsFilenames;
 
