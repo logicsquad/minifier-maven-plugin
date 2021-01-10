@@ -23,59 +23,59 @@ import net.logicsquad.minifier.js.JSMinifier;
 
 @Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class MinifierMojo extends AbstractMojo {
-    @Parameter(property = "sourceDir", required = true)
-    private String sourceDir;
+	@Parameter(property = "sourceDir", required = true)
+	private String sourceDir;
 
-    @Parameter(property = "targetDir", required = true)
-    private String targetDir;
+	@Parameter(property = "targetDir", required = true)
+	private String targetDir;
 
-    @Parameter(property = "jsIncludes")
-    private ArrayList<String> jsIncludes;
+	@Parameter(property = "jsIncludes")
+	private ArrayList<String> jsIncludes;
 
-    @Parameter(property = "jsExcludes")
-    private ArrayList<String> jsExcludes;
+	@Parameter(property = "jsExcludes")
+	private ArrayList<String> jsExcludes;
 
-    @Parameter(property = "cssIncludes")
-    private ArrayList<String> cssIncludes;
+	@Parameter(property = "cssIncludes")
+	private ArrayList<String> cssIncludes;
 
-    @Parameter(property = "cssExcludes")
-    private ArrayList<String> cssExcludes;
+	@Parameter(property = "cssExcludes")
+	private ArrayList<String> cssExcludes;
 
-    private List<String> jsFilenames;
+	private List<String> jsFilenames;
 
-    private List<String> cssFilenames;
+	private List<String> cssFilenames;
 
-    private List<String> jsFilenames() {
-    	if (jsFilenames == null) {
-    		jsFilenames = new ArrayList<>();
-    		DirectoryScanner scanner = new DirectoryScanner();
-    		scanner.setBasedir(sourceDir);
-    		scanner.setIncludes(jsIncludes.toArray(new String[0]));
-    		scanner.setExcludes(jsExcludes.toArray(new String[0]));
-    		scanner.addDefaultExcludes();
-    		scanner.scan();
-    		for (String s : scanner.getIncludedFiles()) {
-    			jsFilenames.add(s);
-    		}
-    	}
-    	return jsFilenames;
-    }
+	private List<String> jsFilenames() {
+		if (jsFilenames == null) {
+			jsFilenames = new ArrayList<>();
+			DirectoryScanner scanner = new DirectoryScanner();
+			scanner.setBasedir(sourceDir);
+			scanner.setIncludes(jsIncludes.toArray(new String[0]));
+			scanner.setExcludes(jsExcludes.toArray(new String[0]));
+			scanner.addDefaultExcludes();
+			scanner.scan();
+			for (String s : scanner.getIncludedFiles()) {
+				jsFilenames.add(s);
+			}
+		}
+		return jsFilenames;
+	}
 
-    private List<String> cssFilenames() {
-    	if (cssFilenames == null) {
-    		cssFilenames = new ArrayList<>();
-    		DirectoryScanner scanner = new DirectoryScanner();
-    		scanner.setBasedir(sourceDir);
-    		scanner.setIncludes(cssIncludes.toArray(new String[0]));
-    		scanner.setExcludes(cssExcludes.toArray(new String[0]));
-    		scanner.addDefaultExcludes();
-    		scanner.scan();
-    		for (String s : scanner.getIncludedFiles()) {
-    			cssFilenames.add(s);
-    		}
-    	}
-    	return cssFilenames;
-    }
+	private List<String> cssFilenames() {
+		if (cssFilenames == null) {
+			cssFilenames = new ArrayList<>();
+			DirectoryScanner scanner = new DirectoryScanner();
+			scanner.setBasedir(sourceDir);
+			scanner.setIncludes(cssIncludes.toArray(new String[0]));
+			scanner.setExcludes(cssExcludes.toArray(new String[0]));
+			scanner.addDefaultExcludes();
+			scanner.scan();
+			for (String s : scanner.getIncludedFiles()) {
+				cssFilenames.add(s);
+			}
+		}
+		return cssFilenames;
+	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		minify(JSMinifier.class, jsFilenames());
