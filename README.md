@@ -1,7 +1,7 @@
 ![](https://github.com/logicsquad/minifier-maven-plugin/workflows/build/badge.svg)
 [![License](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-minifier-maven-plugin
+Minifier Maven Plugin
 =====================
 
 What is this?
