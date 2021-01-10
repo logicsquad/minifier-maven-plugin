@@ -21,14 +21,11 @@ import net.logicsquad.minifier.js.JSMinifier;
 
 @Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class MinifierMojo extends AbstractMojo {
-    @Parameter(property = "baseSourceDir", required = true)
-    private String baseSourceDir;
+    @Parameter(property = "sourceDir", required = true)
+    private String sourceDir;
 
-    @Parameter(property = "baseTargetDir", required = true)
-    private String baseTargetDir;
-
-    @Parameter(property = "jsSourceDir")
-    private String jsSourceDir;
+    @Parameter(property = "targetDir", required = true)
+    private String targetDir;
 
     @Parameter(property = "jsIncludes")
     private ArrayList<String> jsIncludes;
@@ -36,82 +33,21 @@ public class MinifierMojo extends AbstractMojo {
     @Parameter(property = "jsExcludes")
     private ArrayList<String> jsExcludes;
 
-    @Parameter(property = "jsTargetDir")
-    private String jsTargetDir;
-
-    @Parameter(property = "cssSourceDir")
-    private String cssSourceDir;
-
     @Parameter(property = "cssIncludes")
     private ArrayList<String> cssIncludes;
 
     @Parameter(property = "cssExcludes")
     private ArrayList<String> cssExcludes;
 
-    @Parameter(property = "cssTargetDir")
-    private String cssTargetDir;
-
-    private String effectiveJsSourceDir;
-
-    private String effectiveCssSourceDir;
-
-    private String effectiveJsTargetDir;
-
-    private String effectiveCssTargetDir;
-
     private List<String> jsFilenames;
 
     private List<String> cssFilenames;
-
-    private String effectiveJsSourceDir() {
-    	if (effectiveJsSourceDir == null) {
-    		StringBuilder sb = new StringBuilder(baseSourceDir);
-    		if (jsSourceDir != null && !jsSourceDir.isEmpty()) {
-    			sb.append(File.pathSeparatorChar).append(jsSourceDir);
-    		}
-    		effectiveJsSourceDir = sb.toString();
-    	}
-    	return effectiveJsSourceDir;
-    }
-
-    private String effectiveCssSourceDir() {
-    	if (effectiveCssSourceDir == null) {
-    		StringBuilder sb = new StringBuilder(baseSourceDir);
-    		if (cssSourceDir != null && !cssSourceDir.isEmpty()) {
-    			sb.append(File.pathSeparatorChar).append(cssSourceDir);
-    		}
-    		effectiveCssSourceDir = sb.toString();
-    	}
-    	return effectiveCssSourceDir;
-    }
-
-    private String effectiveJsTargetDir() {
-    	if (effectiveJsTargetDir == null) {
-    		StringBuilder sb = new StringBuilder(baseTargetDir);
-    		if (jsTargetDir != null && !jsTargetDir.isEmpty()) {
-    			sb.append(File.pathSeparatorChar).append(jsTargetDir);
-    		}
-    		effectiveJsTargetDir = sb.toString();
-    	}
-    	return effectiveJsTargetDir;
-    }
-
-    private String effectiveCssTargetDir() {
-    	if (effectiveCssTargetDir == null) {
-    		StringBuilder sb = new StringBuilder(baseTargetDir);
-    		if (cssTargetDir != null && !cssTargetDir.isEmpty()) {
-    			sb.append(File.pathSeparatorChar).append(cssTargetDir);
-    		}
-    		effectiveCssTargetDir = sb.toString();
-    	}
-    	return effectiveCssTargetDir;
-    }
 
     private List<String> jsFilenames() {
     	if (jsFilenames == null) {
     		jsFilenames = new ArrayList<>();
     		DirectoryScanner scanner = new DirectoryScanner();
-    		scanner.setBasedir(effectiveJsSourceDir());
+    		scanner.setBasedir(sourceDir);
     		scanner.setIncludes(jsIncludes.toArray(new String[0]));
     		scanner.setExcludes(jsExcludes.toArray(new String[0]));
     		scanner.addDefaultExcludes();
@@ -127,7 +63,7 @@ public class MinifierMojo extends AbstractMojo {
     	if (cssFilenames == null) {
     		cssFilenames = new ArrayList<>();
     		DirectoryScanner scanner = new DirectoryScanner();
-    		scanner.setBasedir(effectiveCssSourceDir());
+    		scanner.setBasedir(sourceDir);
     		scanner.setIncludes(cssIncludes.toArray(new String[0]));
     		scanner.setExcludes(cssExcludes.toArray(new String[0]));
     		scanner.addDefaultExcludes();
@@ -142,8 +78,8 @@ public class MinifierMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		for (String s : jsFilenames()) {
 			try {
-				File infile = new File(effectiveJsSourceDir(), s);
-				File outfile = new File(effectiveJsTargetDir(), s);
+				File infile = new File(sourceDir, s);
+				File outfile = new File(targetDir, s);
 				getLog().info("Minifying " + infile + " -> " + outfile);
 				Minifier jsMin = new JSMinifier(new FileReader(infile));
 				jsMin.minify(new FileWriter(outfile));
@@ -160,8 +96,8 @@ public class MinifierMojo extends AbstractMojo {
 		
 		for (String s : cssFilenames()) {
 			try {
-				File infile = new File(effectiveCssSourceDir(), s);
-				File outfile = new File(effectiveCssTargetDir(), s);
+				File infile = new File(sourceDir, s);
+				File outfile = new File(targetDir, s);
 				getLog().info("Minifying " + infile + " -> " + outfile);
 				Minifier cssMin = new CSSMinifier(new FileReader(infile));
 				cssMin.minify(new FileWriter(outfile));
