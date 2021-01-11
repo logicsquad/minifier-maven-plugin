@@ -14,7 +14,7 @@
       <plugin>
         <groupId>net.logicsquad</groupId>
         <artifactId>minifier-maven-plugin</artifactId>
-        <version>0.2</version>
+        <version>0.3-SNAPSHOT</version>
         <executions>
           <execution>
             <id>default-minify</id>
