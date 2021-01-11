@@ -1,7 +1,7 @@
 ![](https://github.com/logicsquad/minifier-maven-plugin/workflows/build/badge.svg)
 [![License](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-minifier-maven-plugin
+Minifier Maven Plugin
 =====================
 
 What is this?
@@ -19,7 +19,7 @@ the `build/plugins` section of your project's POM.
     <plugin>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier-maven-plugin</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
       <executions>
         <execution>
           <id>default-minify</id>

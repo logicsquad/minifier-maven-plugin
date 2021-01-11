@@ -147,6 +147,9 @@ public class MinifierMojo extends AbstractMojo {
 				Constructor<? extends Minifier> constructor = minifierClass.getConstructor(Reader.class);
 				Minifier minifier = constructor.newInstance(
 						new InputStreamReader(Files.newInputStream(infile.toPath()), StandardCharsets.UTF_8));
+				// Depending on where or how the plugin is invoked, the parent directories above
+				// the output file may not exist yet.
+				Files.createDirectories(outfile.toPath().getParent());
 				minifier.minify(
 						new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
 				logMinificationResult(s, infile, outfile);
