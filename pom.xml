@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.logicsquad</groupId>
   <artifactId>minifier-maven-plugin</artifactId>
-  <version>0.2</version>
+  <version>1.0</version>
   <packaging>maven-plugin</packaging>
   <name>Minifier Maven Plugin</name>
   <description>Maven plugin providing minification of web resources.</description>
@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <pmd.version>6.20.0</pmd.version>
+    <pmd.version>6.41.0</pmd.version>
   </properties>
 
   <profiles>
@@ -254,6 +254,32 @@
   <reporting>
     <plugins>
       <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>6.5.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.8.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependency-updates-report</report>
+              <report>plugin-updates-report</report>
+              <report>property-updates-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.9</version>
@@ -322,32 +348,29 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.6.3</version>
+      <version>3.8.4</version>
     </dependency>
- 
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.6.0</version>
+      <version>3.6.2</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier</artifactId>
-      <version>0.2</version>
+      <version>1.0</version>
     </dependency>
-
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.18.1</version>
+      <version>3.21.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.soebes.itf.jupiter.extension</groupId>
       <artifactId>itf-assertj</artifactId>
-      <version>0.9.0</version>
+      <version>0.11.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -359,7 +382,7 @@
     <dependency>
       <groupId>com.soebes.itf.jupiter.extension</groupId>
       <artifactId>itf-jupiter-extension</artifactId>
-      <version>0.9.0</version>
+      <version>0.11.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
