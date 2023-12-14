@@ -19,7 +19,7 @@ the `build/plugins` section of your project's POM.
     <plugin>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier-maven-plugin</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
       <executions>
         <execution>
           <id>default-minify</id>
