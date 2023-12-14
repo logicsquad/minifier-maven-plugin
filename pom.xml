@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.logicsquad</groupId>
   <artifactId>minifier-maven-plugin</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <packaging>maven-plugin</packaging>
   <name>Minifier Maven Plugin</name>
   <description>Maven plugin providing minification of web resources.</description>
@@ -366,6 +366,7 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>3.9.3</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
@@ -374,9 +375,14 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+    <dependency>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
@@ -399,6 +405,12 @@
       <groupId>com.soebes.itf.jupiter.extension</groupId>
       <artifactId>itf-jupiter-extension</artifactId>
       <version>0.12.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-xml</artifactId>
+      <version>4.0.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
