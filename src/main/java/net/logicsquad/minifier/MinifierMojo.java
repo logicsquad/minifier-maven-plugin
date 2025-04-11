@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -126,40 +125,34 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		minify(JSMinifier.class, jsFilenames());
-		minify(CSSMinifier.class, cssFilenames());
-		return;
+		minify(JSMinifier::new, jsFilenames());
+		minify(CSSMinifier::new, cssFilenames());
 	}
 
 	/**
-	 * Minifies {@link File}s represented by {@code filenames} using an instance of
-	 * {@code minifierClass}.
+	 * Minifies {@link File}s represented by {@code filenames} using a {@link Minifier} supplied by {@code minifierCreate}.
 	 *
-	 * @param minifierClass class implementing {@link Minifier}
-	 * @param filenames     list of filenames
+	 * @param minifierCreate function which returns a {@link Minifier} from a {@link Reader}
+	 * @param filenames      list of filenames
 	 * @throws MojoFailureException if any exception is caught during minification
 	 */
-	private void minify(Class<? extends Minifier> minifierClass, List<String> filenames) throws MojoFailureException {
+	private void minify(Function<Reader, ? extends Minifier> minifierCreate, List<String> filenames) throws MojoFailureException {
 		for (String s : filenames) {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				Constructor<? extends Minifier> constructor = minifierClass.getConstructor(Reader.class);
-				Minifier minifier = constructor.newInstance(
-						new InputStreamReader(Files.newInputStream(infile.toPath()), StandardCharsets.UTF_8));
-				// Depending on where or how the plugin is invoked, the parent directories above
-				// the output file may not exist yet.
-				Files.createDirectories(outfile.toPath().getParent());
-				minifier.minify(
-						new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
-				logMinificationResult(s, infile, outfile);
-			} catch (MinificationException | IOException | NoSuchMethodException | SecurityException
-					| InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				throw new MojoFailureException("Unable to minify resources.", e);
+				try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(infile.toPath()), StandardCharsets.UTF_8)) {
+					Minifier minifier = minifierCreate.apply(reader);
+					// Depending on where or how the plugin is invoked, the parent directories above
+					// the output file may not exist yet.
+					Files.createDirectories(outfile.toPath().getParent());
+					minifier.minify(new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
+					logMinificationResult(s, infile, outfile);
+				}
+			} catch (MinificationException | IOException | SecurityException | IllegalArgumentException e) {
+				throw new MojoFailureException("Unable to minify resource: '" + s + "'", e);
 			}
 		}
-		return;
 	}
 
 	/**
