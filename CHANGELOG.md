@@ -3,6 +3,12 @@
 The format here is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3] - 2026-08-09
+### Changed
+- Updated Minifier dependency to 1.4. #5
+- MojoFailureException now logs the resource name for minification
+  failure. #6
+
 ## [1.2] - 2023-12-14
 ### Changed
 - Made some adjustments to POM to remove some Maven warnings. #2
