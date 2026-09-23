@@ -209,7 +209,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.3</version>
     </dependency>
     <dependency>
       <groupId>net.logicsquad</groupId>
@@ -219,7 +219,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.24.2</version>
+      <version>3.27.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
