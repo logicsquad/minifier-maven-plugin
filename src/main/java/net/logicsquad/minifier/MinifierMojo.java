@@ -33,13 +33,13 @@ public class MinifierMojo extends AbstractMojo {
 	 * Source directory
 	 */
 	@Parameter(property = "sourceDir", required = true)
-	private String sourceDir;
+	private File sourceDir;
 
 	/**
 	 * Target directory
 	 */
 	@Parameter(property = "targetDir", required = true)
-	private String targetDir;
+	private File targetDir;
 
 	/**
 	 * List of Javascript includes

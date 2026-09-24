@@ -13,4 +13,15 @@ public class MinifierMojoIT {
 		assertThat(result).project().hasTarget().withFile("hello.css");
 		return;
 	}
+
+	/**
+	 * Maven builds the module from the parent directory, so relative paths must
+	 * resolve against the module rather than the working directory.
+	 */
+	@MavenTest
+	public void relativePathsInModule(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		assertThat(result).project().withModule("web").hasTarget().withFile("web/module.css").isNotEmptyFile();
+		return;
+	}
 }
