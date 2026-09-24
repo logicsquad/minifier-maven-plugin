@@ -41,4 +41,12 @@ public class MinifierMojoIT {
 		assertThat(web.resolve("script.js")).content().contains("return a+b");
 		return;
 	}
+
+	@MavenTest
+	public void emptyResource(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		assertThat(result).out().info().anyMatch(line -> line.startsWith("Minified 'empty.css' 0 -> "))
+				.noneMatch(line -> line.startsWith("Minified 'empty.css'") && line.contains("%"));
+		return;
+	}
 }

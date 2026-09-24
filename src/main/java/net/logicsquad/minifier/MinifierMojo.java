@@ -167,6 +167,11 @@ public class MinifierMojo extends AbstractMojo {
 	 * @param post output size in bytes
 	 */
 	private void logMinificationResult(String name, long pre, long post) {
+		// A percentage reduction means nothing for an empty resource.
+		if (pre == 0) {
+			getLog().info("Minified '" + name + "' " + pre + " -> " + post);
+			return;
+		}
 		long reduction = (long) (100.0 - (((double) post / (double) pre) * 100.0));
 		getLog().info("Minified '" + name + "' " + pre + " -> " + post + " (" + reduction + "%)");
 		return;
