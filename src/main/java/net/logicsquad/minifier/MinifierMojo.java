@@ -2,9 +2,9 @@ package net.logicsquad.minifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -33,13 +33,13 @@ public class MinifierMojo extends AbstractMojo {
 	 * Source directory
 	 */
 	@Parameter(property = "sourceDir", required = true)
-	private String sourceDir;
+	private File sourceDir;
 
 	/**
 	 * Target directory
 	 */
 	@Parameter(property = "targetDir", required = true)
-	private String targetDir;
+	private File targetDir;
 
 	/**
 	 * List of Javascript includes
@@ -125,6 +125,9 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (!sourceDir.isDirectory()) {
+			throw new MojoFailureException("sourceDir is not an existing directory: '" + sourceDir + "'");
+		}
 		minify(JSMinifier::new, jsFilenames());
 		minify(CSSMinifier::new, cssFilenames());
 	}
@@ -141,14 +144,15 @@ public class MinifierMojo extends AbstractMojo {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(infile.toPath()), StandardCharsets.UTF_8)) {
-					Minifier minifier = minifierCreate.apply(reader);
-					// Depending on where or how the plugin is invoked, the parent directories above
-					// the output file may not exist yet.
-					Files.createDirectories(outfile.toPath().getParent());
-					minifier.minify(new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
-					logMinificationResult(s, infile, outfile);
-				}
+				// Read the whole resource before opening the output file, which truncates the
+				// input when targetDir is sourceDir.
+				byte[] input = Files.readAllBytes(infile.toPath());
+				Minifier minifier = minifierCreate.apply(new StringReader(new String(input, StandardCharsets.UTF_8)));
+				// Depending on where or how the plugin is invoked, the parent directories above
+				// the output file may not exist yet.
+				Files.createDirectories(outfile.toPath().getParent());
+				minifier.minify(new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
+				logMinificationResult(s, input.length, outfile.length());
 			} catch (MinificationException | IOException | SecurityException | IllegalArgumentException e) {
 				throw new MojoFailureException("Unable to minify resource: '" + s + "'", e);
 			}
@@ -158,13 +162,16 @@ public class MinifierMojo extends AbstractMojo {
 	/**
 	 * Logs minification result.
 	 *
-	 * @param name    filename
-	 * @param infile  input {@link File}
-	 * @param outfile output {@link File}
+	 * @param name filename
+	 * @param pre  input size in bytes
+	 * @param post output size in bytes
 	 */
-	private void logMinificationResult(String name, File infile, File outfile) {
-		long pre = infile.length();
-		long post = outfile.length();
+	private void logMinificationResult(String name, long pre, long post) {
+		// A percentage reduction means nothing for an empty resource.
+		if (pre == 0) {
+			getLog().info("Minified '" + name + "' " + pre + " -> " + post);
+			return;
+		}
 		long reduction = (long) (100.0 - (((double) post / (double) pre) * 100.0));
 		getLog().info("Minified '" + name + "' " + pre + " -> " + post + " (" + reduction + "%)");
 		return;

@@ -19,14 +19,11 @@
           <execution>
             <id>default-minify</id>
             <configuration>
-              <sourceDir>${basedir}/src/test/resources-its/net/logicsquad/minifier/MinifierMojoIT/canBuild/src/main/webserver-resources</sourceDir>
-              <targetDir>${basedir}/target/maven-it/net/logicsquad/minifier/MinifierMojoIT/canBuild/project/target</targetDir>
+              <sourceDir>src/main/missing</sourceDir>
+              <targetDir>target/web</targetDir>
               <cssIncludes>
                 <cssInclude>**/*.css</cssInclude>
               </cssIncludes>
-              <jsIncludes>
-                <jsInclude>**/*.js</jsInclude>
-              </jsIncludes>
             </configuration>
             <goals>
               <goal>minify</goal>
