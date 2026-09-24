@@ -24,4 +24,11 @@ public class MinifierMojoIT {
 		assertThat(result).project().withModule("web").hasTarget().withFile("web/module.css").isNotEmptyFile();
 		return;
 	}
+
+	@MavenTest
+	public void missingSourceDir(MavenExecutionResult result) {
+		assertThat(result).isFailure();
+		assertThat(result).out().error().anyMatch(line -> line.contains("sourceDir is not an existing directory"));
+		return;
+	}
 }

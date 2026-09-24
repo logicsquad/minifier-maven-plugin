@@ -125,6 +125,9 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (!sourceDir.isDirectory()) {
+			throw new MojoFailureException("sourceDir is not an existing directory: '" + sourceDir + "'");
+		}
 		minify(JSMinifier::new, jsFilenames());
 		minify(CSSMinifier::new, cssFilenames());
 	}
