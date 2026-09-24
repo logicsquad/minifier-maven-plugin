@@ -47,6 +47,7 @@
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+    <itf.version>0.13.1</itf.version>
   </properties>
 
   <profiles>
@@ -105,7 +106,7 @@
       <plugin>
         <groupId>com.soebes.itf.jupiter.extension</groupId>
         <artifactId>itf-maven-plugin</artifactId>
-        <version>0.9.0</version>
+        <version>${itf.version}</version>
         <executions>
           <execution>
             <id>installing</id>
@@ -119,7 +120,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.6.0</version>
         <configuration>
           <systemPropertyVariables>
             <maven.version>${maven.version}</maven.version>
@@ -186,7 +187,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.0-RC1</version>
+        <version>5.14.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -225,7 +226,7 @@
     <dependency>
       <groupId>com.soebes.itf.jupiter.extension</groupId>
       <artifactId>itf-assertj</artifactId>
-      <version>0.12.0</version>
+      <version>${itf.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -236,7 +237,7 @@
     <dependency>
       <groupId>com.soebes.itf.jupiter.extension</groupId>
       <artifactId>itf-jupiter-extension</artifactId>
-      <version>0.12.0</version>
+      <version>${itf.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
