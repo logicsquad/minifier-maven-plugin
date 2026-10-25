@@ -8,10 +8,14 @@ import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 
 @MavenJupiterExtension
 public class MinifierMojoIT {
+	/**
+	 * Only comments that start with "/*!" are kept.
+	 */
 	@MavenTest
 	public void canBuild(MavenExecutionResult result) {
 		assertThat(result).isSuccessful();
-		assertThat(result).project().hasTarget().withFile("hello.css");
+		assertThat(result).project().hasTarget().withFile("hello.css").content().contains("/*! Banner-style comment")
+				.doesNotContain("/**");
 		return;
 	}
 
@@ -39,6 +43,20 @@ public class MinifierMojoIT {
 		Path web = result.getMavenProjectResult().getTargetProjectDirectory().resolve("src/main/web");
 		assertThat(web.resolve("style.css")).content().contains("color:#fff");
 		assertThat(web.resolve("script.js")).content().contains("return a+b");
+		return;
+	}
+
+	/**
+	 * A resource that can't be minified fails the build, saying why and where, and
+	 * is left as it is, even when minifying in place.
+	 */
+	@MavenTest
+	public void failedMinificationInPlace(MavenExecutionResult result) {
+		assertThat(result).isFailure();
+		assertThat(result).out().error()
+				.anyMatch(line -> line.contains("Unable to minify 'style.css': Unterminated comment at line 4, column 1"));
+		Path web = result.getMavenProjectResult().getTargetProjectDirectory().resolve("src/main/web");
+		assertThat(web.resolve("style.css")).content().isEqualTo(".kept {\n  color: #FFFFFF;\n}\n/* Never closed\n");
 		return;
 	}
 

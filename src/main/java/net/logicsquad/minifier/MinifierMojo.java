@@ -2,14 +2,10 @@ package net.logicsquad.minifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -128,33 +124,37 @@ public class MinifierMojo extends AbstractMojo {
 		if (!sourceDir.isDirectory()) {
 			throw new MojoFailureException("sourceDir is not an existing directory: '" + sourceDir + "'");
 		}
-		minify(JSMinifier::new, jsFilenames());
-		minify(CSSMinifier::new, cssFilenames());
+		minify(new JSMinifier(), jsFilenames());
+		minify(new CSSMinifier(), cssFilenames());
 	}
 
 	/**
-	 * Minifies {@link File}s represented by {@code filenames} using a {@link Minifier} supplied by {@code minifierCreate}.
+	 * Minifies {@link File}s represented by {@code filenames} using {@code minifier}.
 	 *
-	 * @param minifierCreate function which returns a {@link Minifier} from a {@link Reader}
-	 * @param filenames      list of filenames
-	 * @throws MojoFailureException if any exception is caught during minification
+	 * @param minifier  minifier for the resources
+	 * @param filenames list of filenames
+	 * @throws MojoFailureException   if a resource can't be minified
+	 * @throws MojoExecutionException if a resource can't be read or written, or
+	 *                                minifying it fails unexpectedly
 	 */
-	private void minify(Function<Reader, ? extends Minifier> minifierCreate, List<String> filenames) throws MojoFailureException {
+	private void minify(Minifier minifier, List<String> filenames) throws MojoExecutionException, MojoFailureException {
 		for (String s : filenames) {
 			try {
 				File infile = new File(sourceDir, s);
 				File outfile = new File(targetDir, s);
-				// Read the whole resource before opening the output file, which truncates the
-				// input when targetDir is sourceDir.
 				byte[] input = Files.readAllBytes(infile.toPath());
-				Minifier minifier = minifierCreate.apply(new StringReader(new String(input, StandardCharsets.UTF_8)));
+				byte[] output = minifier.minify(new String(input, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
+				// Nothing is written until minification succeeds, so a failure leaves the
+				// output file as it was, which is the input when targetDir is sourceDir.
 				// Depending on where or how the plugin is invoked, the parent directories above
 				// the output file may not exist yet.
 				Files.createDirectories(outfile.toPath().getParent());
-				minifier.minify(new OutputStreamWriter(Files.newOutputStream(outfile.toPath()), StandardCharsets.UTF_8));
-				logMinificationResult(s, input.length, outfile.length());
-			} catch (MinificationException | IOException | SecurityException | IllegalArgumentException e) {
-				throw new MojoFailureException("Unable to minify resource: '" + s + "'", e);
+				Files.write(outfile.toPath(), output);
+				logMinificationResult(s, input.length, output.length);
+			} catch (MinificationException e) {
+				throw new MojoFailureException("Unable to minify '" + s + "': " + e.getMessage(), e);
+			} catch (IOException | RuntimeException e) {
+				throw new MojoExecutionException("Unable to minify '" + s + "': " + e, e);
 			}
 		}
 	}
