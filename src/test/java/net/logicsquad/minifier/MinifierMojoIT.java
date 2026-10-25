@@ -4,6 +4,7 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import java.nio.file.Path;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
 import com.soebes.itf.jupiter.extension.MavenTest;
+import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 
 @MavenJupiterExtension
@@ -34,6 +35,19 @@ public class MinifierMojoIT {
 	public void missingSourceDir(MavenExecutionResult result) {
 		assertThat(result).isFailure();
 		assertThat(result).out().error().anyMatch(line -> line.contains("sourceDir is not an existing directory"));
+		return;
+	}
+
+	/**
+	 * A skipped execution does nothing, not even check sourceDir, which doesn't
+	 * exist here.
+	 */
+	@MavenTest
+	@SystemProperty(value = "minifier.skip", content = "true")
+	public void skip(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		assertThat(result).out().info().contains("Skipping minification");
+		assertThat(result.getMavenProjectResult().getTargetProjectDirectory().resolve("target/web")).doesNotExist();
 		return;
 	}
 

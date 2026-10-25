@@ -62,6 +62,12 @@ public class MinifierMojo extends AbstractMojo {
 	private List<String> cssExcludes;
 
 	/**
+	 * Whether to skip minification
+	 */
+	@Parameter(property = "minifier.skip", defaultValue = "false")
+	private boolean skip;
+
+	/**
 	 * Resolved list of Javascript filenames to minify
 	 */
 	private List<String> jsFilenames;
@@ -121,6 +127,10 @@ public class MinifierMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (skip) {
+			getLog().info("Skipping minification");
+			return;
+		}
 		if (!sourceDir.isDirectory()) {
 			throw new MojoFailureException("sourceDir is not an existing directory: '" + sourceDir + "'");
 		}
