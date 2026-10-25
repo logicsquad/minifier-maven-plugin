@@ -3,7 +3,9 @@ package net.logicsquad.minifier;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import com.soebes.itf.jupiter.extension.MavenCLIOptions;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
+import com.soebes.itf.jupiter.extension.MavenOption;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
@@ -29,6 +31,23 @@ public class MinifierMojoIT {
 	public void relativePathsInModule(MavenExecutionResult result) {
 		assertThat(result).isSuccessful();
 		assertThat(result).project().withModule("web").hasTarget().withFile("web/module.css").isNotEmptyFile();
+		return;
+	}
+
+	/**
+	 * In a parallel build, Maven doesn't warn that the plugin isn't thread-safe.
+	 * Options given here replace the default ones, so those are given too.
+	 */
+	@MavenTest
+	@MavenOption(MavenCLIOptions.BATCH_MODE)
+	@MavenOption(MavenCLIOptions.SHOW_VERSION)
+	@MavenOption(MavenCLIOptions.ERRORS)
+	@MavenOption(value = MavenCLIOptions.THREADS, parameter = "2")
+	public void parallelBuild(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		assertThat(result).out().warn().noneMatch(line -> line.contains("thread-safe"));
+		assertThat(result).project().withModule("a").hasTarget().withFile("web/a.css").isNotEmptyFile();
+		assertThat(result).project().withModule("b").hasTarget().withFile("web/b.css").isNotEmptyFile();
 		return;
 	}
 

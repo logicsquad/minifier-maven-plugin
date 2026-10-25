@@ -26,7 +26,7 @@ import net.logicsquad.minifier.js.JSMinifier;
  *
  * @author paulh
  */
-@Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "minify", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
 public class MinifierMojo extends AbstractMojo {
 	/**
 	 * Source directory
