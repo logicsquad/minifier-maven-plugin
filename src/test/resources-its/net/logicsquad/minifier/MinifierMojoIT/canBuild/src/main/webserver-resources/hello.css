@@ -7,7 +7,7 @@ comments, at-rules, nested blocks, strings and escapes, url() forms,
 colours, shorthand values, custom properties, vendor prefixes and
 non-ASCII text.
 */
-/*! Banner-style comment: CSSMinifier strips these like any other. */
+/*! Banner-style comment: CSSMinifier keeps these, as they mark a licence or copyright notice. */
 
 /*
 Fonts
@@ -203,7 +203,7 @@ Components
 }
 .button:focus-visible { outline: 3px solid var(--accent) !important; outline-offset: 1px; }
 .button-wide { display: flex; width: calc(100% - 2 * var(--space-1)); }
-/** Kept in the output: CSSMinifier retains comments that open with a double asterisk. */
+/** Documentation comment: CSSMinifier removes these, like any other. */
 .summary {
   padding: var(--space-3);
   background: var(--surface);

@@ -3,6 +3,40 @@
 The format here is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5] - 2026-10-25
+### Added
+- Added a `skip` parameter, also set by the user property
+  `minifier.skip`, which switches minification off. #18
+- Added an `encoding` parameter, also set by the user property
+  `minifier.encoding`, for resources that aren't UTF-8. As in browsers,
+  a resource that starts with a byte order mark is read and written in
+  the encoding that gives, so a UTF-16 resource with one needs no
+  setting. #20
+
+### Changed
+- Updated Minifier dependency to 2.0, which also brings the CSS fixes
+  in Minifier 1.6 and the JavaScript fixes in 1.7. Minified JavaScript
+  no longer starts with a line break, and minified CSS no longer ends
+  with one. #19
+- Comments that start with `/*!`, which mark a licence or copyright
+  notice, are now kept in both CSS and JavaScript, and all others are
+  removed, including the `/**` comments that CSS minification used to
+  keep. #19
+- A resource that can't be minified now fails the build with a message
+  that says what went wrong and where, such as
+  `Unterminated comment at line 4, column 1`. #19
+- The `minify` goal is now marked as thread-safe, so a parallel build
+  no longer warns about it. #21
+
+### Fixed
+- A resource that fails to minify is now left as it was, where
+  minifying in place used to cut it short or empty it. #19
+- A write error on a CSS resource now fails the build, rather than
+  leaving a truncated file behind. #19
+- Resources that aren't valid UTF-8 are no longer silently corrupted:
+  one that isn't valid in its encoding now fails the build, saying
+  where. #20
+
 ## [1.4] - 2026-09-24
 ### Added
 - Added integration tests for minifying in place, relative paths in a

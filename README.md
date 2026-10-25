@@ -19,7 +19,7 @@ the `build/plugins` section of your project's POM.
     <plugin>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier-maven-plugin</artifactId>
-      <version>1.4</version>
+      <version>1.5</version>
       <executions>
         <execution>
           <id>default-minify</id>
@@ -46,12 +46,12 @@ the `build/plugins` section of your project's POM.
       </executions>
     </plugin>
 
-Mandatory properties are:
+Mandatory parameters are:
 
 * `sourceDir`: the parent directory in which to scan for resources.
 * `targetDir`: the corresponding directory in the built package.
 
-The appropriate values for these properties will vary with the type of
+The appropriate values for these parameters will vary with the type of
 project you are trying to build. (The example above shows appropriate
 values for a WebObjects project.) Relative paths are resolved against
 the project's base directory.
@@ -60,6 +60,16 @@ You can then supply include and exclude patterns to build up lists of
 filenames of resources to minify. This is done separately for
 Javascript and CSS, as shown above. The syntax for these patterns
 follows the [standard Maven syntax used by other plugins](https://maven.apache.org/plugins/maven-resources-plugin/examples/include-exclude.html).
+
+Other optional parameters are:
+
+* `skip`: if `true`, nothing is minified. The user property
+  `minifier.skip` sets it too, as in `mvn -Dminifier.skip package`.
+* `encoding`: the encoding the resources are read and written in, UTF-8
+  by default. The user property `minifier.encoding` sets it too. As in
+  browsers, a resource that starts with a byte order mark, for UTF-8,
+  UTF-16BE or UTF-16LE, is read and written in that encoding instead. A
+  resource that isn't valid in its encoding fails the build.
 
 Contributing
 ------------

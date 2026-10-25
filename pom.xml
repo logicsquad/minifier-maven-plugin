@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.logicsquad</groupId>
   <artifactId>minifier-maven-plugin</artifactId>
-  <version>1.4</version>
+  <version>1.5</version>
   <packaging>maven-plugin</packaging>
   <name>Minifier Maven Plugin</name>
   <description>Maven plugin providing minification of web resources.</description>
@@ -43,7 +43,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.12.0</central-publishing-maven-plugin.version>
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
@@ -179,6 +179,15 @@
       <testResource>
         <directory>src/test/resources-its</directory>
         <filtering>true</filtering>
+        <includes>
+          <include>**/pom.xml</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources-its</directory>
+        <excludes>
+          <exclude>**/pom.xml</exclude>
+        </excludes>
       </testResource>
     </testResources>
   </build>
@@ -216,7 +225,7 @@
     <dependency>
       <groupId>net.logicsquad</groupId>
       <artifactId>minifier</artifactId>
-      <version>1.5</version>
+      <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
