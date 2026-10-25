@@ -1,6 +1,7 @@
 package net.logicsquad.minifier;
 
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
 import com.soebes.itf.jupiter.extension.MavenTest;
@@ -71,6 +72,53 @@ public class MinifierMojoIT {
 				.anyMatch(line -> line.contains("Unable to minify 'style.css': Unterminated comment at line 4, column 1"));
 		Path web = result.getMavenProjectResult().getTargetProjectDirectory().resolve("src/main/web");
 		assertThat(web.resolve("style.css")).content().isEqualTo(".kept {\n  color: #FFFFFF;\n}\n/* Never closed\n");
+		return;
+	}
+
+	/**
+	 * A resource that isn't valid in the encoding, UTF-8 by default, fails the build,
+	 * saying where, rather than being changed.
+	 */
+	@MavenTest
+	public void notValidUtf8(MavenExecutionResult result) {
+		assertThat(result).isFailure();
+		assertThat(result).out().error()
+				.anyMatch(line -> line.contains("Unable to minify 'style.css': Not valid UTF-8 at line 1, column 27"));
+		assertThat(result.getMavenProjectResult().getTargetProjectDirectory().resolve("target/web/style.css"))
+				.doesNotExist();
+		return;
+	}
+
+	/**
+	 * Resources in another encoding keep their non-ASCII characters, and one that
+	 * starts with a byte order mark is still read in the encoding that gives.
+	 */
+	@MavenTest
+	public void otherEncoding(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		Path web = result.getMavenProjectResult().getTargetProjectDirectory().resolve("target/web");
+		assertThat(web.resolve("style.css"))
+				.hasBinaryContent(".a::before{content:\"caf\u00e9\"}".getBytes(StandardCharsets.ISO_8859_1));
+		assertThat(web.resolve("app.js")).hasBinaryContent("var s=\"caf\u00e9\";".getBytes(StandardCharsets.ISO_8859_1));
+		assertThat(web.resolve("utf16.css"))
+				.hasBinaryContent("\ufeff.a::before{content:\"caf\u00e9\"}".getBytes(StandardCharsets.UTF_16LE));
+		return;
+	}
+
+	/**
+	 * As in browsers, a resource that starts with a byte order mark is read, and
+	 * written, in the encoding that gives, with no encoding set.
+	 */
+	@MavenTest
+	public void byteOrderMarks(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+		Path web = result.getMavenProjectResult().getTargetProjectDirectory().resolve("target/web");
+		String css = "\ufeff.a::before{content:\"caf\u00e9\"}";
+		assertThat(web.resolve("utf8.css")).hasBinaryContent(css.getBytes(StandardCharsets.UTF_8));
+		assertThat(web.resolve("utf16be.css")).hasBinaryContent(css.getBytes(StandardCharsets.UTF_16BE));
+		assertThat(web.resolve("utf16le.css")).hasBinaryContent(css.getBytes(StandardCharsets.UTF_16LE));
+		assertThat(web.resolve("utf16le.js"))
+				.hasBinaryContent("\ufeffvar s=\"caf\u00e9\";".getBytes(StandardCharsets.UTF_16LE));
 		return;
 	}
 

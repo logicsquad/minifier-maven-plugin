@@ -65,6 +65,11 @@ Other optional parameters are:
 
 * `skip`: if `true`, nothing is minified. The user property
   `minifier.skip` sets it too, as in `mvn -Dminifier.skip package`.
+* `encoding`: the encoding the resources are read and written in, UTF-8
+  by default. The user property `minifier.encoding` sets it too. As in
+  browsers, a resource that starts with a byte order mark, for UTF-8,
+  UTF-16BE or UTF-16LE, is read and written in that encoding instead. A
+  resource that isn't valid in its encoding fails the build.
 
 Contributing
 ------------
